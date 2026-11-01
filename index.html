@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self' blob:; style-src 'self'; script-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>Silen1 的画室</title>
+  <meta name="description" content="Silen1 在 iPad 上画的画。每一幅画里都藏着一个洞，通往下一幅。">
+  <meta name="theme-color" content="#2A2DCF">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Silen1 的画室">
+  <meta property="og:description" content="每一幅画里都藏着一个洞，通往下一幅。">
+  <meta property="og:image" content="https://silen1.com/gallery/assets/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+  <a class="skip" href="#works">跳到作品列表</a>
+
+  <header class="bar">
+    <a class="bar__mark" href="./">Silen1</a>
+    <nav class="bar__nav" aria-label="主导航">
+      <a href="#works">作品</a>
+      <a href="#about">关于</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 首页：每幅画里藏着一个洞，洞的那头是下一幅画。往下滚就一层层掉进去，最后一幅的洞通回第一幅。
+         洞口的位置由 data/works.js 里每幅画的 "portal": [横向比例, 纵向比例] 决定。 -->
+    <section class="dive" id="dive" aria-label="一幅接一幅地掉进画里">
+      <div class="dive__stage">
+        <div class="dive__world" id="dive-world" aria-hidden="true"></div>
+
+        <div class="dive__intro sticker" id="dive-intro">
+          <p class="dive__lede"><span>每一幅画里，</span><span>都藏着一个洞。</span><br><span>洞的那头，</span><span>是下一幅画。</span></p>
+          <p class="dive__hint">往下滚，掉进去</p>
+        </div>
+
+        <div class="dive__caption sticker" id="dive-caption" aria-live="polite">
+          <p class="dive__layer" id="dive-layer"></p>
+          <p class="dive__title" id="dive-title"></p>
+          <a class="dive__link" id="dive-link" href="#works">看这幅画</a>
+        </div>
+
+        <nav class="depth" aria-label="跳到某一层">
+          <ol id="depth"></ol>
+        </nav>
+
+        <p class="dive__loop sticker" id="dive-loop">咦，又回到了第一幅。<br>原来这条路是一个圈。</p>
+      </div>
+    </section>
+
+    <section class="works" id="works" aria-labelledby="works-heading">
+      <div class="works__head">
+        <h2 id="works-heading">作品</h2>
+        <p class="works__count" id="works-count"></p>
+        <button class="toggle" id="layout-toggle" type="button" aria-pressed="false">排整齐</button>
+      </div>
+      <p class="works__lede" id="static-lede" hidden>每一幅画里，都藏着一个通往下一幅画的洞。</p>
+      <p class="works__hint" id="board-hint">所有的画都摊在这里了，按住画板拖一拖。</p>
+      <div class="board" id="board">
+        <ol class="grid" id="grid"></ol>
+      </div>
+      <p class="empty" id="works-empty" hidden>还没有作品。把画放进 works 文件夹，再在 data/works.js 里登记一下就会出现在这里。</p>
+    </section>
+
+    <section class="about" id="about" aria-labelledby="about-heading">
+      <h2 id="about-heading">关于</h2>
+      <div class="about__body">
+        <!-- 把下面几段改成你自己的介绍 -->
+        <p>我是 Silen1，平时学信息安全，闲下来就用 iPad 画画。这里放的是我自己喜欢的作品。我喜欢在画里偷偷藏一个小洞，假装它通往别的地方。</p>
+        <dl class="about__tools">
+          <div><dt>设备</dt><dd>iPad 和 Apple Pencil</dd></div>
+          <div><dt>软件</dt><dd>Procreate</dd></div>
+          <div><dt>联系</dt><dd>在 index.html 里改成你的邮箱或社交账号</dd></div>
+        </dl>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>作品版权归 Silen1 所有，转载或使用请先联系我。</p>
+  </footer>
+
+  <script src="data/works.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

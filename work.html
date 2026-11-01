@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self' blob:; style-src 'self'; script-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <title>作品 | Silen1 的画室</title>
+  <meta name="description" content="Silen1 在 iPad 上画的一幅画。">
+  <meta name="theme-color" content="#2A2DCF">
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="work">
+  <a class="skip" href="#piece">跳到作品</a>
+
+  <header class="bar">
+    <a class="bar__mark" href="./">Silen1</a>
+    <nav class="bar__nav" aria-label="主导航">
+      <a href="./#works">作品</a>
+      <a href="./#about">关于</a>
+    </nav>
+  </header>
+
+  <main class="piece" id="piece">
+    <div class="piece__art" id="piece-art"></div>
+
+    <aside class="piece__info">
+      <h1 class="piece__title" id="piece-title">作品</h1>
+      <p class="piece__date" id="piece-date"></p>
+      <p class="piece__notes" id="piece-notes"></p>
+      <dl class="piece__meta" id="piece-meta"></dl>
+      <p class="piece__full"><a id="piece-full" href="#">打开大图</a></p>
+    </aside>
+
+    <section class="player" id="player" hidden aria-labelledby="player-heading">
+      <h2 id="player-heading">绘画过程</h2>
+      <div class="player__screen" id="player-screen"></div>
+      <div class="player__controls">
+        <button class="player__btn" id="player-btn" type="button">播放</button>
+        <input class="player__range" id="player-range" type="range" min="0" max="1000" value="0" step="1" aria-label="回放进度">
+        <span class="player__time" id="player-time">00:00</span>
+      </div>
+    </section>
+
+    <nav class="pager" aria-label="上一幅和下一幅">
+      <a class="pager__prev" id="pager-prev" hidden></a>
+      <a class="pager__next" id="pager-next" hidden></a>
+    </nav>
+  </main>
+
+  <p class="empty empty--page" id="piece-missing" hidden>找不到这幅画。它可能改了名字，<a href="./#works">回到作品列表</a>看看。</p>
+
+  <footer class="foot">
+    <p>作品版权归 Silen1 所有，转载或使用请先联系我。</p>
+  </footer>
+
+  <script src="data/works.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

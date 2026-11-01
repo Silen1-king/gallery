@@ -1,0 +1,291 @@
+/* =========================================================
+   Silen1 的画室  ·  天马行空
+   改颜色只需要改下面 :root 里的几个变量
+   ========================================================= */
+:root {
+  --sky: #2A2DCF;        /* 底色：群青天空 */
+  --sky-deep: #1C1E9E;   /* 天空暗部 */
+  --paper: #FFFDF5;      /* 画纸、正文文字 */
+  --ink: #17184A;        /* 纸上的深色文字 */
+  --sun: #FFE45C;        /* 星星、天马航线 */
+  --peach: #FF8FB8;      /* 点缀 */
+  --mint: #7BE0C3;       /* 点缀 */
+  --mist: rgba(255, 253, 245, .68); /* 次要文字 */
+  --tape: rgba(255, 228, 92, .72);
+
+  --font: "PingFang SC", "Hiragino Sans GB", "HarmonyOS Sans SC", "MiSans", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Noto Sans SC", system-ui, sans-serif;
+  --round: ui-rounded, "SF Pro Rounded", "Arial Rounded MT Bold", var(--font);
+
+  --gutter: clamp(16px, 4vw, 48px);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: var(--sky);
+  background-image:
+    radial-gradient(circle at 15% 10%, rgba(255,143,184,.20), transparent 38%),
+    radial-gradient(circle at 85% 70%, rgba(123,224,195,.16), transparent 40%);
+  background-attachment: fixed;
+  color: var(--paper);
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+img, video { display: block; max-width: 100%; }
+a { color: inherit; text-underline-offset: .22em; text-decoration-thickness: 2px; }
+a:hover { text-decoration-color: var(--sun); }
+:focus-visible { outline: 3px solid var(--sun); outline-offset: 3px; border-radius: 6px; }
+h1, h2 { line-height: 1.15; margin: 0; }
+
+.skip {
+  position: absolute; left: 12px; top: -60px; z-index: 50;
+  background: var(--sun); color: var(--ink); padding: 8px 14px; border-radius: 999px;
+  text-decoration: none; font-weight: 700;
+}
+.skip:focus { top: 12px; }
+
+/* ---------- 顶栏 ---------- */
+.bar {
+  position: fixed; inset: 0 0 auto; z-index: 20;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px var(--gutter);
+  padding-top: max(14px, env(safe-area-inset-top));
+  pointer-events: none;
+}
+.bar > * { pointer-events: auto; }
+.bar__mark {
+  font-family: var(--round); font-weight: 900; font-size: 26px; letter-spacing: -.01em;
+  text-decoration: none; display: inline-flex;
+}
+.bar__nav { display: flex; gap: 6px; }
+.bar__nav a {
+  text-decoration: none; padding: 6px 14px; border-radius: 999px;
+  background: rgba(23,24,74,.35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+}
+.bar__nav a:hover { background: var(--paper); color: var(--ink); }
+
+/* ---------- 首页：掉进画里 ---------- */
+.dive { position: relative; height: calc((var(--levels, 6) + 1) * 100vh); background: var(--ink); }
+.dive__stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; }
+.dive__world { position: absolute; inset: 0; contain: strict; }
+
+/* 每一幅画是一“层”：和屏幕一样大，按比例缩放后叠在一起 */
+.level {
+  position: absolute; left: 0; top: 0;
+  transform-origin: 50% 50%; will-change: transform;
+}
+.level.is-deep { filter: drop-shadow(0 0 28px rgba(10, 8, 40, .55)); }
+.level__hole { position: absolute; inset: -50%; }  /* 比画面大一圈，洞口可以一直张成圆形 */
+.level__halo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; filter: blur(22px) saturate(1.2); transform: scale(1.08); }
+.level__frame { position: absolute; inset: 25%; overflow: hidden; }
+.level__frame img { width: 100%; height: 100%; object-fit: cover; }
+.level img { user-select: none; -webkit-user-drag: none; }
+
+/* 洞口：一圈手画的、慢慢转动的虚线 */
+.ring {
+  position: absolute; border-radius: 50%; pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M50 4c26 1 46 20 45 47S74 97 48 96 4 75 5 49 25 3 50 4z' fill='none' stroke='%2317184A' stroke-width='5'/%3E%3Cpath d='M50 4c26 1 46 20 45 47S74 97 48 96 4 75 5 49 25 3 50 4z' fill='none' stroke='%23FFFDF5' stroke-width='2.4' stroke-dasharray='7 6'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  animation: spin 14s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* 浮在画上的“便签” */
+.sticker {
+  position: absolute; margin: 0; background: var(--paper); color: var(--ink);
+  border: 3px solid var(--ink); box-shadow: 6px 7px 0 var(--ink);
+  padding: 14px 18px;
+}
+.dive__intro {
+  left: var(--gutter); bottom: 12vh; max-width: min(520px, calc(100vw - 2 * var(--gutter)));
+  transform: rotate(-2deg); transition: opacity .3s, transform .3s;
+}
+.dive__lede { margin: 0; font-size: clamp(22px, 2.4vw, 32px); font-weight: 900; line-height: 1.35; }
+.dive__lede span { display: inline-block; }
+.dive__hint { margin: 10px 0 0; font-weight: 700; color: #4b4d86; }
+.dive__hint::after { content: ""; display: inline-block; width: .6em; height: .6em; margin-left: .5em; border: solid currentColor; border-width: 0 3px 3px 0; transform: translateY(-.15em) rotate(45deg); animation: nudge 1.4s ease-in-out infinite; }
+@keyframes nudge { 50% { transform: translateY(.1em) rotate(45deg); } }
+.dive.is-moving .dive__intro, .dive.is-deeper .dive__intro { opacity: 0; transform: rotate(-2deg) translateY(20px); pointer-events: none; }
+
+.dive__caption {
+  right: var(--gutter); bottom: 6vh; min-width: 200px; max-width: 300px;
+  transform: rotate(1.5deg); transition: opacity .25s, transform .35s cubic-bezier(.3, 1.5, .5, 1);
+}
+.dive__layer { margin: 0; font-size: 14px; color: #4b4d86; font-variant-numeric: tabular-nums; }
+.dive__title { margin: 2px 0 8px; font-size: 22px; font-weight: 900; line-height: 1.3; }
+.dive__link { font-weight: 800; }
+.dive.is-moving .dive__caption { opacity: 0; transform: rotate(1.5deg) translateY(16px); pointer-events: none; }
+.dive:not(.is-deeper) .dive__caption { opacity: 0; pointer-events: none; }
+
+.dive__loop {
+  left: 50%; top: 50%; text-align: center; font-size: clamp(20px, 2.4vw, 30px); font-weight: 900; line-height: 1.4;
+  transform: translate(-50%, -50%) rotate(-1.5deg) scale(.9); opacity: 0; pointer-events: none;
+  transition: opacity .4s, transform .5s cubic-bezier(.3, 1.6, .5, 1);
+}
+.dive.is-looped .dive__loop { opacity: 1; transform: translate(-50%, -50%) rotate(-1.5deg); }
+.dive.is-looped .dive__caption { opacity: 0; }
+
+/* 右侧的深度计：每一层一格，点一下直接跳过去 */
+.depth { position: absolute; right: calc(var(--gutter) - 6px); top: 50%; transform: translateY(-50%); }
+.depth ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.depth button {
+  display: block; width: 30px; height: 30px; padding: 0; cursor: pointer;
+  border: 3px solid var(--ink); border-radius: 50%; background: var(--paper);
+  font: 800 12px/1 var(--round); color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink); transition: transform .3s cubic-bezier(.3, 1.6, .5, 1), background .2s;
+}
+.depth button:hover { transform: scale(1.15); }
+.depth button[aria-current="true"] { background: var(--sun); transform: scale(1.25); }
+
+/* ---------- 作品画板 ---------- */
+.works { padding: 120px 0 80px; }
+.works__head {
+  display: flex; align-items: baseline; flex-wrap: wrap; gap: 6px 18px;
+  padding: 0 var(--gutter);
+}
+.works__head h2 { font-size: clamp(44px, 9vw, 120px); font-weight: 900; letter-spacing: -.02em; }
+.works__count { margin: 0; color: var(--mist); }
+.toggle {
+  margin-left: auto; font: inherit; font-weight: 800; cursor: pointer;
+  background: var(--paper); color: var(--ink); border: 3px solid var(--ink);
+  padding: 6px 18px; border-radius: 999px; box-shadow: 4px 4px 0 var(--ink);
+}
+.toggle:hover { background: var(--sun); }
+.toggle:active { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+.works__lede { margin: 8px 0 0; padding: 0 var(--gutter); font-size: 20px; font-weight: 800; }
+.works__hint { margin: 4px 0 0; padding: 0 var(--gutter); color: var(--mist); font-size: 15px; }
+
+.grid { list-style: none; margin: 0; padding: 0; }
+.card a { display: block; text-decoration: none; color: var(--ink); }
+.card__paper {
+  display: block; background: var(--paper); padding: 10px 10px 12px;
+  border: 3px solid var(--ink); box-shadow: 8px 10px 0 var(--sky-deep);
+}
+.card__paper img { width: 100%; height: auto; background: #fff; }
+.card__title { display: block; font-weight: 800; margin-top: 10px; line-height: 1.4; }
+.card__meta { display: block; font-size: 13px; color: #5a5c86; font-variant-numeric: tabular-nums; }
+.card__badge { display: inline-block; margin-left: 6px; padding: 0 8px; border-radius: 999px; background: var(--mint); color: var(--ink); font-size: 12px; font-weight: 700; }
+
+/* 散落模式：一块可以拖动的大画板 */
+.board.is-scatter {
+  position: relative; height: min(88vh, 900px); margin-top: 20px;
+  overflow: hidden; cursor: grab; touch-action: none;
+  border-block: 3px dashed rgba(255, 253, 245, .25);
+}
+.board.is-scatter.is-dragging { cursor: grabbing; }
+.board.is-scatter .grid { position: absolute; left: 0; top: 0; will-change: transform; }
+.board.is-scatter .card {
+  position: absolute; transform: rotate(var(--rot, 0deg));
+  transition: transform .45s cubic-bezier(.3,1.6,.5,1);
+}
+.board.is-scatter .card:hover, .board.is-scatter .card:focus-within { transform: rotate(0deg) scale(1.06); z-index: 5; }
+.board.is-scatter.is-dragging .card { pointer-events: none; }
+.board.is-scatter img { -webkit-user-drag: none; user-select: none; }
+
+/* 整齐模式 */
+.board.is-tidy { padding: 32px var(--gutter) 0; }
+.board.is-tidy .grid { columns: 3 260px; column-gap: 28px; }
+.board.is-tidy .card { break-inside: avoid; margin-bottom: 32px; }
+
+/* ---------- 关于 ---------- */
+.about {
+  margin: 40px var(--gutter) 0; padding: clamp(28px, 5vw, 64px);
+  background: var(--paper); color: var(--ink);
+  border: 3px solid var(--ink); box-shadow: 12px 14px 0 var(--sky-deep);
+  transform: rotate(.6deg); max-width: 900px;
+}
+.about h2 { font-size: clamp(36px, 6vw, 72px); font-weight: 900; margin-bottom: 18px; }
+.about__body { max-width: 36em; }
+.about__body p { margin: 0 0 20px; }
+.about__tools { margin: 0; display: grid; gap: 8px; }
+.about__tools div { display: flex; gap: 14px; }
+.about__tools dt { font-weight: 800; min-width: 3em; }
+.about__tools dd { margin: 0; }
+
+.foot { padding: 64px var(--gutter) max(40px, env(safe-area-inset-bottom)); color: var(--mist); font-size: 14px; }
+.foot p { margin: 0; }
+
+.empty { padding: 40px var(--gutter); color: var(--mist); max-width: 40em; }
+.empty--page { padding-top: 140px; font-size: 20px; color: var(--paper); }
+
+/* ---------- 作品详情页 ---------- */
+.piece {
+  display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(260px, 1fr);
+  gap: 40px clamp(24px, 4vw, 64px);
+  padding: 110px var(--gutter) 40px; max-width: 1400px; margin: 0 auto;
+}
+.piece__art {
+  position: relative; align-self: start;
+  background: var(--paper); padding: clamp(8px, 1.2vw, 14px);
+  border: 3px solid var(--ink); box-shadow: 14px 18px 0 var(--sky-deep);
+  transform: rotate(-1deg);
+  width: fit-content; max-width: 100%; justify-self: center;
+}
+.piece__art img { width: auto; max-width: 100%; height: auto; max-height: 80vh; background: #fff; }
+.piece__info { align-self: start; position: sticky; top: 96px; }
+.piece__title { font-size: clamp(34px, 4.6vw, 64px); font-weight: 900; letter-spacing: -.01em; }
+.piece__date { margin: 6px 0 18px; color: var(--mist); font-variant-numeric: tabular-nums; }
+.piece__notes { margin: 0 0 22px; max-width: 30em; }
+.piece__meta { margin: 0 0 22px; display: grid; gap: 6px; }
+.piece__meta div { display: flex; gap: 14px; padding: 8px 0; border-bottom: 2px dashed rgba(255,253,245,.22); }
+.piece__meta dt { color: var(--mist); min-width: 4em; }
+.piece__meta dd { margin: 0; font-weight: 700; }
+.piece__full a { font-weight: 800; }
+
+.player { grid-column: 1 / -1; max-width: 900px; }
+.player h2 { font-size: clamp(28px, 3.6vw, 44px); font-weight: 900; margin-bottom: 16px; }
+.player__screen { width: fit-content; max-width: 100%; background: var(--paper); border: 3px solid var(--ink); padding: 10px; box-shadow: 10px 12px 0 var(--sky-deep); }
+.player__screen video { width: auto; max-width: 100%; max-height: 72vh; background: #fff; }
+.player__controls { display: flex; align-items: center; gap: 14px; margin-top: 16px; }
+.player__btn {
+  font: inherit; font-weight: 800; cursor: pointer; min-width: 4.6em;
+  background: var(--sun); color: var(--ink); border: 3px solid var(--ink);
+  padding: 4px 16px; border-radius: 999px; box-shadow: 3px 3px 0 var(--ink);
+}
+.player__range { flex: 1; accent-color: var(--sun); height: 28px; }
+.player__time { font-family: var(--round); font-variant-numeric: tabular-nums; font-weight: 700; }
+
+.pager { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 16px; padding-top: 24px; }
+.pager a {
+  text-decoration: none; font-weight: 800; padding: 10px 20px; border-radius: 999px;
+  background: rgba(23,24,74,.4); max-width: 48%;
+}
+.pager a:hover { background: var(--paper); color: var(--ink); }
+.pager__next { margin-left: auto; text-align: right; }
+
+/* ---------- 404 ---------- */
+.lost { min-height: 100vh; display: grid; place-content: center; text-align: center; padding: var(--gutter); gap: 8px; }
+.lost__canvas {
+  width: 200px; height: 250px; margin: 0 auto 24px; background: var(--paper);
+  border: 3px solid var(--ink); box-shadow: 12px 14px 0 var(--sky-deep); transform: rotate(-4deg);
+}
+.lost__canvas { position: relative; }
+.lost__canvas::after { content: ""; position: absolute; left: 50%; top: 46%; width: 64px; height: 64px; margin: -32px 0 0 -32px; border-radius: 50%; background: var(--ink); box-shadow: inset 6px 8px 0 rgba(0,0,0,.35); }
+.lost h1 { font-size: clamp(30px, 5vw, 52px); font-weight: 900; }
+.lost p { margin: 0; }
+
+/* ---------- 手机 ---------- */
+@media (max-width: 820px) {
+  .dive__intro { bottom: auto; top: 84px; }
+  .dive__caption { left: var(--gutter); right: 64px; bottom: 5vh; max-width: none; }
+  .depth { right: 10px; }
+  .depth button { width: 26px; height: 26px; font-size: 11px; }
+
+  .piece { grid-template-columns: 1fr; padding-top: 90px; }
+  .piece__info { position: static; }
+  .toggle { margin-left: 0; }
+}
+
+/* ---------- 尊重“减少动态效果”设置 ---------- */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* 整齐模式也留一点歪歪扭扭 */
+.board.is-tidy .card:nth-child(3n+1) .card__paper { transform: rotate(-1.2deg); }
+.board.is-tidy .card:nth-child(3n+2) .card__paper { transform: rotate(.9deg); }
+.player__controls { max-width: 640px; }
