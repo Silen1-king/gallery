@@ -7,7 +7,7 @@
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>Silen1 的画室</title>
   <meta name="description" content="Silen1 在 iPad 上画的画。Paintings by Silen1.">
-  <meta name="theme-color" content="#F3F0E9">
+  <meta name="theme-color" content="#F2EFE8">
   <meta property="og:type" content="website">
   <meta property="og:title" content="Silen1 的画室">
   <meta property="og:description" content="Silen1 在 iPad 上画的画。Paintings by Silen1.">
@@ -20,43 +20,45 @@
 <body data-page="home">
   <a class="skip" href="#hall">跳到展厅</a>
 
-  <header class="bar">
-    <a class="mark" href="./"><span class="seal" aria-hidden="true">画</span><span class="mark__name">Silen1 的画室</span></a>
+  <header class="bar" id="bar">
+    <a class="mark" href="./" aria-label="Silen1 的画室，首页"><span class="seal" aria-hidden="true">画</span><span class="mark__name">Silen1 <span class="mark__sub">的画室</span></span></a>
     <nav class="bar__nav" aria-label="主导航">
       <a href="#hall">展厅</a>
-      <a href="#catalog">目录</a>
+      <a href="#catalog">清单</a>
       <a href="#about">关于</a>
     </nav>
   </header>
 
   <main>
     <section class="hero" aria-labelledby="hero-title">
-      <div class="hero__text">
-        <p class="kicker" lang="en">Silen1 · Paintings · <span id="hero-year">2026</span></p>
-        <h1 id="hero-title">墨<br>与线</h1>
-        <p class="hero__en" lang="en">Ink &amp; Line</p>
-        <p class="hero__lede">一些在课后画下的画。<br><span lang="en">Quiet lines, drawn after hours.</span></p>
-        <a class="btn" href="#hall">进入展厅 <em lang="en">Enter</em></a>
-      </div>
+      <h1 class="hero__title" id="hero-title">墨与线</h1>
       <figure class="hero__fig" id="hero-fig" hidden>
         <a class="frame" id="hero-art"></a>
-        <figcaption id="hero-cap"></figcaption>
+        <figcaption class="hero__cap" id="hero-cap"></figcaption>
       </figure>
+      <div class="hero__side">
+        <p class="smallcaps" lang="en">Silen1 · Paintings</p>
+        <p class="hero__en" lang="en">Ink &amp; Line</p>
+        <p class="hero__lede">一些在课后画下的画。<br><span lang="en">Quiet lines, drawn after hours.</span></p>
+        <a class="hero__go" href="#hall"><span>入展</span><i aria-hidden="true"></i><em lang="en" id="hero-count"></em></a>
+      </div>
     </section>
 
     <div class="hall" id="hall" aria-label="展厅"></div>
 
-    <section class="catalog" id="catalog" aria-labelledby="catalog-heading">
+    <p class="room" id="room" aria-hidden="true"><b id="room-no">01</b><span>/</span><span id="room-total">05</span><span class="room__title" id="room-title"></span></p>
+
+    <section class="checklist" id="catalog" aria-labelledby="catalog-heading">
       <header class="sec-head">
-        <h2 id="catalog-heading">作品目录 <em lang="en">Catalogue</em></h2>
-        <p id="count"></p>
+        <h2 id="catalog-heading">展品清单</h2>
+        <p class="sec-head__en" lang="en">Checklist of the exhibition</p>
       </header>
-      <ol class="grid" id="index"></ol>
+      <ol class="list" id="index"></ol>
       <p class="empty" id="works-empty" hidden>还没有作品。</p>
     </section>
 
     <section class="about" id="about" aria-labelledby="about-heading">
-      <h2 id="about-heading">关于 <em lang="en">About</em></h2>
+      <h2 id="about-heading">关于</h2>
       <div class="about__body" lang="en">
         <p class="about__lead">Quiet lines, drawn after hours.<br>Each keeps a small hollow, a door left ajar.</p>
         <dl class="about__tools">
@@ -69,7 +71,9 @@
   </main>
 
   <footer class="foot">
-    <p>© Silen1　作品版权归 Silen1 所有，转载或使用请先联系我。</p>
+    <p>© <span id="foot-year">2026</span> Silen1。作品版权归 Silen1 所有，转载或使用请先联系我。</p>
+    <p lang="en">Set in Noto Serif SC &amp; Cormorant Garamond.</p>
+    <p id="foot-updated"></p>
   </footer>
 
   <script src="data/works.js"></script>

@@ -34,16 +34,18 @@
   const workUrl = w => `work.html?id=${encodeURIComponent(w.id)}`;
   const canvas = w => w.canvas || (w.width && w.height ? `${w.width} × ${w.height} px` : '');
   const medium = w => ['iPad 数字绘画', canvas(w)].filter(Boolean).join(' · ');
-  const byline = w => ['Silen1', year(w)].filter(Boolean).join(' · ');
 
-  // 展签：编号、标题、英文名、作者与年份、媒材
+  // 展签：照博物馆的写法，作者、标题、英文名与年份、媒材、尺寸，最后是编号
   function label(w, tag = 'h3') {
     return h('div', { class: 'label' },
-      h('p', { class: 'label__no', text: no(w) }),
+      h('p', { class: 'label__artist', lang: 'en', text: 'Silen1' }),
       h(tag, { class: 'label__title', text: w.title }),
-      w.title_en ? h('p', { class: 'label__en', lang: 'en', text: w.title_en }) : null,
-      h('p', { class: 'label__meta', text: byline(w) }),
-      h('p', { class: 'label__meta', text: medium(w) }));
+      h('p', { class: 'label__en', lang: 'en' },
+        w.title_en ? h('i', { text: w.title_en }) : null,
+        year(w) ? `${w.title_en ? ', ' : ''}${year(w)}` : null),
+      h('p', { class: 'label__meta', text: 'iPad 数字绘画' }),
+      canvas(w) ? h('p', { class: 'label__meta label__num', text: canvas(w) }) : null,
+      h('p', { class: 'label__no', lang: 'en', text: no(w) }));
   }
 
   // 有些托管服务不支持“分段下载”视频，浏览器就没法拖动进度。
@@ -56,20 +58,44 @@
       .catch(() => { video.src = url; });
   }
 
-  // 滚到眼前时慢慢浮现
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // 走到画前，灯才亮起来
   function reveal() {
     const els = document.querySelectorAll('.reveal');
-    if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    if (!('IntersectionObserver' in window) || reduce) {
       els.forEach(el => el.classList.add('in'));
       return;
     }
     const io = new IntersectionObserver(es => es.forEach(e => {
       if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-    }), { threshold: 0.12, rootMargin: '0px 0px -5% 0px' });
+    }), { threshold: 0.18 });
     els.forEach(el => io.observe(el));
   }
 
+  // 顶栏：往下读时让开，往上翻时回来
+  function bar() {
+    const el = $('#bar');
+    if (!el) return;
+    let last = scrollY, ticking = false;
+    const update = () => {
+      const y = scrollY;
+      el.classList.toggle('is-scrolled', y > 40);
+      if (Math.abs(y - last) > 6) { el.classList.toggle('is-hidden', y > last && y > 240); last = y; }
+      ticking = false;
+    };
+    addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+    update();
+  }
+
+  // 从墙上点进详情页时，画平滑地飞过去（支持的浏览器才有）
+  function morphTo(img) {
+    document.querySelectorAll('img').forEach(x => { if (x.style.viewTransitionName) x.style.viewTransitionName = ''; });
+    if (img) img.style.viewTransitionName = 'art';
+  }
+
   const page = document.body.dataset.page;
+  bar();
   if (page === 'home') initHome();
   if (page === 'work') initWork();
 
@@ -80,31 +106,78 @@
       $('#hero-fig').hidden = false;
       const a = $('#hero-art');
       a.href = workUrl(latest);
+      a.dataset.id = latest.id;
       a.append(h('img', { src: latest.image, alt: latest.title, width: latest.width, height: latest.height, decoding: 'async', fetchpriority: 'high' }));
-      $('#hero-cap').textContent = [`${latest.title}${latest.title_en ? `　${latest.title_en}` : ''}`, year(latest)].filter(Boolean).join('，');
-      $('#hero-year').textContent = year(latest) || $('#hero-year').textContent;
+      $('#hero-cap').append(
+        h('span', { class: 'label__num', text: no(latest) }),
+        h('span', { text: latest.title }),
+        latest.title_en ? h('i', { lang: 'en', text: latest.title_en }) : null);
     }
+    $('#hero-count').textContent = `${WORKS.length} ${WORKS.length === 1 ? 'work' : 'works'}`;
 
-    // 展厅：一面墙挂一幅画
+    // 展厅：一面墙挂一幅画，左右交替着挂
     const hall = $('#hall');
     WORKS.forEach((w, i) => {
-      const art = h('a', { class: 'frame wall__art', href: workUrl(w), 'aria-label': `${w.title}，查看作品` },
+      const art = h('a', { class: 'frame wall__art', href: workUrl(w), 'data-id': w.id, 'aria-label': `${w.title}，查看作品` },
         h('img', { src: w.image, alt: w.title, width: w.width, height: w.height, decoding: 'async', loading: i < 1 ? 'eager' : 'lazy' }));
-      hall.append(h('section', { class: 'wall reveal', 'aria-label': w.title }, art, label(w)));
+      hall.append(h('section', { class: `wall reveal ${i % 2 ? 'wall--r' : 'wall--l'}`, 'aria-label': w.title, 'data-i': i }, art, label(w)));
     });
 
-    // 目录
-    const grid = $('#index');
+    // 展品清单
+    const list = $('#index');
     WORKS.forEach(w => {
-      grid.append(h('li', { class: 'cell reveal' },
-        h('a', { href: workUrl(w) },
-          h('div', { class: 'cell__img' }, h('img', { src: w.thumb || w.image, alt: w.title, loading: 'lazy', decoding: 'async' })),
-          h('p', { class: 'cell__cap' },
-            h('span', { text: `${String(w._no).padStart(2, '0')}　${w.title}` }),
-            w.title_en ? h('em', { lang: 'en', text: w.title_en }) : null))));
+      list.append(h('li', { class: 'row' },
+        h('a', { href: workUrl(w), 'data-id': w.id },
+          h('span', { class: 'row__no label__num', text: String(w._no).padStart(2, '0') }),
+          h('span', { class: 'row__thumb' }, h('img', { src: w.thumb || w.image, alt: '', loading: 'lazy', decoding: 'async' })),
+          h('span', { class: 'row__title' }, h('b', { text: w.title }), w.title_en ? h('i', { lang: 'en', text: w.title_en }) : null),
+          h('span', { class: 'row__year label__num', text: year(w) }),
+          h('span', { class: 'row__medium', text: medium(w) }),
+          h('span', { class: 'row__go', 'aria-hidden': 'true', text: '→' }))));
     });
-    $('#count').textContent = `${WORKS.length} 件作品 · ${WORKS.length} ${WORKS.length === 1 ? 'work' : 'works'}`;
     $('#works-empty').hidden = WORKS.length > 0;
+
+    // 页脚：最近更新
+    const newest = WORKS.reduce((m, w) => (String(w.date || '') > m ? String(w.date) : m), '');
+    if (newest) {
+      $('#foot-year').textContent = newest.slice(0, 4);
+      $('#foot-updated').textContent = `共 ${WORKS.length} 件 · 最近更新 ${newest.replace(/-/g, '.')}`;
+    }
+
+    // 角落里的展厅编号：走到哪一面墙，就显示第几件
+    const room = $('#room');
+    $('#room-total').textContent = String(WORKS.length).padStart(2, '0');
+    if ('IntersectionObserver' in window) {
+      const seen = new Set();
+      const show = () => {
+        const i = Math.min(...seen);
+        const w = WORKS[i];
+        room.classList.toggle('is-on', seen.size > 0);
+        if (!w) return;
+        $('#room-no').textContent = String(i + 1).padStart(2, '0');
+        $('#room-title').textContent = w.title;
+      };
+      const io = new IntersectionObserver(es => {
+        es.forEach(e => { const i = +e.target.dataset.i; e.isIntersecting ? seen.add(i) : seen.delete(i); });
+        show();
+      }, { rootMargin: '-45% 0px -45% 0px' });
+      hall.querySelectorAll('.wall').forEach(el => io.observe(el));
+    }
+
+    // 点进去的那一幅，在新页面里接着出现
+    document.addEventListener('click', e => {
+      const a = e.target.closest('a[data-id]');
+      if (a) morphTo(a.querySelector('img'));
+    });
+    // 从详情页返回时，画飞回它原来的墙上
+    addEventListener('pagereveal', e => {
+      if (!e.viewTransition || !window.navigation || !navigation.activation || !navigation.activation.from) return;
+      const id = new URL(navigation.activation.from.url).searchParams.get('id');
+      const wall = id && hall.querySelector(`a[data-id="${CSS.escape(id)}"] img`);
+      if (!wall) return;
+      morphTo(wall);
+      e.viewTransition.finished.finally(() => { wall.style.viewTransitionName = ''; });
+    });
 
     reveal();
   }
@@ -122,17 +195,14 @@
     }
 
     document.title = `${w.title}${w.title_en ? ` ${w.title_en}` : ''} | Silen1 的画室`;
-    $('#piece-no').textContent = no(w);
-    $('#piece-title').textContent = w.title;
-    $('#piece-en').textContent = w.title_en || '';
-    $('#piece-en').hidden = !w.title_en;
-    $('#piece-by').textContent = byline(w);
-    $('#piece-medium').textContent = medium(w);
+    $('#piece-label').replaceWith(Object.assign(label(w, 'h1'), { className: 'label label--lg', id: 'piece-label' }));
     $('#piece-notes').textContent = w.notes || '';
     $('#piece-notes').hidden = !w.notes;
     const art = $('#piece-art');
     art.href = w.image;
-    art.append(h('img', { src: w.image, alt: w.title, width: w.width, height: w.height, decoding: 'async' }));
+    const big = h('img', { src: w.image, alt: w.title, width: w.width, height: w.height, decoding: 'async' });
+    art.append(big);
+    morphTo(big);
     $('#piece-full').href = w.image;
 
     const meta = [
@@ -155,9 +225,13 @@
         h('span', {},
           h('small', { text: dir }),
           h('b', { text: x.title }),
-          x.title_en ? h('em', { lang: 'en', text: x.title_en }) : null));
+          x.title_en ? h('i', { lang: 'en', text: x.title_en }) : null));
     };
     pager($('#pager-prev'), WORKS[idx - 1], '← 上一件');
+    $('.pager').addEventListener('click', e => {
+      const a = e.target.closest('.pager__link');
+      if (a) { big.style.viewTransitionName = ''; morphTo(a.querySelector('img')); }
+    });
     pager($('#pager-next'), WORKS[idx + 1], '下一件 →');
   }
 
