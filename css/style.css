@@ -289,6 +289,46 @@ p { margin: 0; text-wrap: pretty; }
 .btn em { font-size: 15px; letter-spacing: .02em; }
 .btn:hover { background: var(--ink); color: var(--wall); }
 
+/* ---------- 藏室 ---------- */
+.bar__nav a[aria-current="page"] { color: var(--ink); }
+.bar__nav a[aria-current="page"]::after { transform: scaleX(1); }
+.vault-head { padding: 168px var(--g) 40px; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); align-items: end; }
+.vault-head .smallcaps { grid-column: 1 / -1; color: var(--mute); margin-bottom: 18px; }
+.vault-head h1 { grid-column: 1 / span 4; font-size: clamp(56px, 7vw, 112px); line-height: 1; letter-spacing: .14em; }
+.vault-head__lede { grid-column: 6 / span 4; font-size: 14px; color: var(--ink-2); line-height: 1.95; }
+.vault-head__en { grid-column: 10 / span 3; font-family: var(--latin); font-style: italic; font-size: 16px; line-height: 1.5; color: var(--mute); }
+.vault .wall__art { width: min(100%, calc(72vh * var(--ar, .75))); }
+.frame--empty { cursor: alias; }
+.frame__window {
+  position: relative; display: grid; grid-template-rows: 1fr auto; justify-items: center; aspect-ratio: var(--ar, .75);
+  padding: 12% 8% 9%; background: #F7F5F0; color: var(--ink);
+  background-image: repeating-linear-gradient(135deg, rgba(60,45,30,.035) 0 1px, transparent 1px 9px);
+}
+.frame__title { writing-mode: vertical-rl; font-size: clamp(40px, 5.4vh, 64px); font-weight: 600; letter-spacing: .3em; color: rgba(29,27,24,.82); }
+.frame__thumb { align-self: center; width: auto; max-width: min(100%, 300px); max-height: 100%; min-height: 0; object-fit: contain; box-shadow: 0 0 0 1px rgba(0,0,0,.05); }
+.frame--preview .frame__window { padding: 0 0 7%; gap: 14px; grid-template-rows: minmax(0, 1fr) auto; background: var(--mat); aspect-ratio: auto; }
+.frame__hint { display: grid; justify-items: center; gap: 2px; font-size: 11.5px; letter-spacing: .12em; color: var(--mute); text-align: center; }
+.frame__hint i { font-size: 14px; letter-spacing: .02em; transition: color .3s; }
+.frame--empty:hover .frame__hint i { color: var(--seal); }
+.label__artist-en { font-family: var(--latin); color: var(--ink-2); }
+.label__holder { margin-top: 12px; display: grid; color: var(--ink-2); }
+.label__holder i { font-size: 14px; color: var(--mute); }
+.label__note { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--hair); color: var(--ink-2); }
+.label__src { margin-top: 14px; font-family: var(--latin); font-size: 14px; letter-spacing: .02em; }
+.label__src a { padding-bottom: 2px; background: linear-gradient(currentColor, currentColor) 0 100% / 100% 1px no-repeat; transition: background-size .5s var(--ease), color .3s; }
+.label__src a:hover { color: var(--seal); background-size: 0 1px; background-position: 100% 100%; }
+.vault-note { margin: 40px var(--g) 0; padding: 40px 0 96px; border-top: 1px solid var(--hair); display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: clamp(16px, 2vw, 32px); }
+.vault-note h2 { grid-column: 1 / span 3; font-size: 15px; letter-spacing: .16em; }
+.vault-note p { grid-column: 5 / span 6; font-size: 13px; color: var(--mute); line-height: 1.95; }
+@media (max-width: 960px) {
+  .vault-head { grid-template-columns: 1fr; row-gap: 20px; padding-top: 128px; }
+  .vault-head h1, .vault-head__lede, .vault-head__en { grid-column: 1; }
+  .vault .wall .wall__art { width: min(100%, calc(64vh * var(--ar, .75))); justify-self: center; }
+  .vault-note { grid-template-columns: 1fr; row-gap: 12px; }
+  .vault-note h2, .vault-note p { grid-column: 1; }
+}
+@media (max-width: 420px) { .bar__nav { gap: 14px; letter-spacing: .08em; } }
+
 /* ---------- 页面之间的过渡：画从墙上飞进详情页 ---------- */
 @view-transition { navigation: auto; }
 ::view-transition-group(art) { animation-duration: .7s; animation-timing-function: var(--ease); }

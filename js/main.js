@@ -98,6 +98,7 @@
   bar();
   if (page === 'home') initHome();
   if (page === 'work') initWork();
+  if (page === 'collection') initCollection();
 
   /* =================== 首页 =================== */
   function initHome() {
@@ -233,6 +234,60 @@
       if (a) { big.style.viewTransitionName = ''; morphTo(a.querySelector('img')); }
     });
     pager($('#pager-next'), WORKS[idx + 1], '下一件 →');
+  }
+
+  /* =================== 藏室 =================== */
+  function initCollection() {
+    const items = (Array.isArray(window.COLLECTION) ? window.COLLECTION : []).filter(x => x && x.id && x.title);
+    const vault = $('#vault');
+    const showImage = x => x.image && x.rights && !['link', 'preview'].includes(x.rights);
+    // 尺寸写成“高 × 宽”（博物馆的习惯），用来决定空画框的比例
+    const ratio = x => {
+      const m = String(x.size || '').match(/([\d.]+)\s*[×x]\s*([\d.]+)/);
+      return m ? +m[2] / +m[1] : 0.75;
+    };
+    const host = x => { try { return new URL(x.url).hostname.replace(/^www\./, ''); } catch { return ''; } };
+
+    items.forEach((x, i) => {
+      const ext = x.url ? { href: x.url, target: '_blank', rel: 'noopener' } : {};
+      let art;
+      if (showImage(x)) {
+        art = h('a', { class: 'frame wall__art', ...ext },
+          h('img', { src: x.image, alt: `${x.artist}《${x.title}》`, loading: i ? 'lazy' : 'eager', decoding: 'async' }));
+      } else if (x.preview) {
+        // 受版权保护的作品：只放一张很小的缩略图，点进去到原处看
+        art = h('a', { class: 'frame wall__art frame--empty frame--preview', ...ext, 'aria-label': `到${x.holder || '出处'}观看 ${x.artist}《${x.title}》` },
+          h('span', { class: 'frame__window' },
+            h('img', { class: 'frame__thumb', src: x.preview, alt: `${x.artist}《${x.title}》缩略图`, loading: i ? 'lazy' : 'eager', decoding: 'async' }),
+            h('span', { class: 'frame__hint' },
+              h('span', { text: x.holder ? `缩略图 · 原作在${x.holder}` : '缩略图 · 原作在出处页面' }),
+              h('i', { lang: 'en', text: 'Thumbnail · view at source ↗' }))));
+      } else {
+        art = h('a', { class: 'frame wall__art frame--empty', ...ext, 'aria-label': `到${x.holder || '出处'}观看 ${x.artist}《${x.title}》` },
+          h('span', { class: 'frame__window' },
+            h('span', { class: 'frame__title', text: x.title }),
+            h('span', { class: 'frame__hint' },
+              h('span', { text: x.holder ? `原作图像在${x.holder}` : '原作图像在出处页面' }),
+              h('i', { lang: 'en', text: 'View at source ↗' }))));
+      }
+      art.style.setProperty('--ar', ratio(x));
+
+      const lbl = h('div', { class: 'label' },
+        h('p', { class: 'label__artist' }, h('span', { text: x.artist }), x.artist_en ? h('span', { class: 'label__artist-en', lang: 'en', text: ` ${x.artist_en}` }) : null),
+        x.life ? h('p', { class: 'label__meta label__num', text: `(${x.life})` }) : null,
+        h('h2', { class: 'label__title', text: x.title }),
+        x.title_en ? h('p', { class: 'label__en', lang: 'en' }, h('i', { text: x.title_en })) : null,
+        ...[x.date, x.medium, x.size].filter(Boolean).map(t => h('p', { class: 'label__meta', text: t })),
+        x.holder ? h('p', { class: 'label__holder' }, h('span', { text: `${x.holder}藏` }), x.holder_en ? h('i', { lang: 'en', text: x.holder_en }) : null) : null,
+        x.note ? h('p', { class: 'label__note', text: x.note }) : null,
+        x.url ? h('p', { class: 'label__src' }, h('a', { ...ext, text: `出处 · ${host(x)} ↗` })) : null);
+
+      vault.append(h('section', { class: `wall reveal ${i % 2 ? 'wall--r' : 'wall--l'}`, 'aria-label': `${x.artist}《${x.title}》` }, art, lbl));
+    });
+    $('#vault-empty').hidden = items.length > 0;
+    const newest = items.reduce((m, x) => (String(x.added || '') > m ? String(x.added) : m), '');
+    if (newest) $('#foot-updated').textContent = `共 ${items.length} 件 · 最近更新 ${newest.replace(/-/g, '.')}`;
+    reveal();
   }
 
   function initPlayer(w) {

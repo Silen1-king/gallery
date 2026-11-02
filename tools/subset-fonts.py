@@ -26,7 +26,7 @@ except ImportError:
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "assets" / "fonts"
-TEXT_FILES = ["index.html", "work.html", "404.html", "js/main.js", "data/works.js"]
+TEXT_FILES = ["index.html", "work.html", "collection.html", "404.html", "js/main.js", "data/works.js", "data/collection.js"]
 # 常用标点、数字、字母总是带上
 BASE = "".join(chr(c) for c in range(0x20, 0x7F)) + "·×—–…“”‘’、。，：；！？（）《》「」『』【】　©→←"
 
