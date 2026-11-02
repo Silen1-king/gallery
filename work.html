@@ -3,11 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self' blob:; style-src 'self'; script-src 'self'; font-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data:; media-src 'self' blob:; style-src 'self'; script-src 'self'; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <title>作品 | Silen1 的画室</title>
-  <meta name="description" content="Silen1 在 iPad 上画的一幅画。">
-  <meta name="theme-color" content="#2A2DCF">
+  <meta name="theme-color" content="#F3F0E9">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Silen1 的画室">
+  <meta property="og:image" content="https://silen1.com/gallery/assets/og.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -15,26 +18,34 @@
   <a class="skip" href="#piece">跳到作品</a>
 
   <header class="bar">
-    <a class="bar__mark" href="./">Silen1</a>
+    <a class="mark" href="./"><span class="seal" aria-hidden="true">画</span><span class="mark__name">Silen1 的画室</span></a>
     <nav class="bar__nav" aria-label="主导航">
-      <a href="./#works">作品</a>
+      <a href="./#hall">展厅</a>
+      <a href="./#catalog">目录</a>
       <a href="./#about">关于</a>
     </nav>
   </header>
 
   <main class="piece" id="piece">
-    <div class="piece__art" id="piece-art"></div>
+    <div class="piece__wall">
+      <a class="frame piece__art" id="piece-art" target="_blank" rel="noopener"></a>
+    </div>
 
     <aside class="piece__info">
-      <h1 class="piece__title" id="piece-title">作品</h1>
-      <p class="piece__date" id="piece-date"></p>
+      <div class="label label--lg">
+        <p class="label__no" id="piece-no"></p>
+        <h1 class="label__title" id="piece-title">作品</h1>
+        <p class="label__en" id="piece-en" lang="en"></p>
+        <p class="label__meta" id="piece-by"></p>
+        <p class="label__meta" id="piece-medium"></p>
+      </div>
       <p class="piece__notes" id="piece-notes"></p>
       <dl class="piece__meta" id="piece-meta"></dl>
-      <p class="piece__full"><a id="piece-full" href="#">打开大图</a></p>
+      <p class="piece__full"><a id="piece-full" target="_blank" rel="noopener">查看原图 <em lang="en">View full size</em></a></p>
     </aside>
 
     <section class="player" id="player" hidden aria-labelledby="player-heading">
-      <h2 id="player-heading">绘画过程</h2>
+      <h2 id="player-heading">绘画过程 <em lang="en">Process</em></h2>
       <div class="player__screen" id="player-screen"></div>
       <div class="player__controls">
         <button class="player__btn" id="player-btn" type="button">播放</button>
@@ -43,16 +54,17 @@
       </div>
     </section>
 
-    <nav class="pager" aria-label="上一幅和下一幅">
-      <a class="pager__prev" id="pager-prev" hidden></a>
-      <a class="pager__next" id="pager-next" hidden></a>
+    <nav class="pager" aria-label="上一件和下一件">
+      <a class="pager__link pager__prev" id="pager-prev" hidden></a>
+      <a class="pager__back" href="./#catalog">全部作品 <em lang="en">All works</em></a>
+      <a class="pager__link pager__next" id="pager-next" hidden></a>
     </nav>
   </main>
 
-  <p class="empty empty--page" id="piece-missing" hidden>找不到这幅画。它可能改了名字，<a href="./#works">回到作品列表</a>看看。</p>
+  <p class="empty empty--page" id="piece-missing" hidden>找不到这幅画。它可能改了名字，<a href="./#catalog">回到作品目录</a>看看。</p>
 
   <footer class="foot">
-    <p>作品版权归 Silen1 所有，转载或使用请先联系我。</p>
+    <p>© Silen1　作品版权归 Silen1 所有，转载或使用请先联系我。</p>
   </footer>
 
   <script src="data/works.js"></script>

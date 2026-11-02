@@ -4,6 +4,7 @@ window.WORKS = [
   {
     "id": "smoking",
     "title": "吸烟",
+    "title_en": "Smoking",
     "date": "2026-11-01",
     "image": "works/smoking/smoking.webp",
     "thumb": "works/smoking/smoking-thumb.webp",
@@ -18,6 +19,7 @@ window.WORKS = [
   {
     "id": "bird",
     "title": "鸟",
+    "title_en": "Swallow",
     "date": "2026-11-02",
     "image": "works/bird/bird.webp",
     "thumb": "works/bird/bird-thumb.webp",
@@ -32,6 +34,7 @@ window.WORKS = [
   {
     "id": "bamboo",
     "title": "竹",
+    "title_en": "Bamboo I",
     "date": "2026-11-02",
     "image": "works/bamboo/bamboo.webp",
     "thumb": "works/bamboo/bamboo-thumb.webp",
@@ -46,6 +49,7 @@ window.WORKS = [
   {
     "id": "bamboo-2",
     "title": "竹",
+    "title_en": "Bamboo II",
     "date": "2026-11-02",
     "image": "works/bamboo-2/bamboo-2.webp",
     "thumb": "works/bamboo-2/bamboo-2-thumb.webp",
@@ -60,6 +64,7 @@ window.WORKS = [
   {
     "id": "orchid",
     "title": "兰花",
+    "title_en": "Orchid",
     "date": "2026-11-02",
     "image": "works/orchid/orchid.webp",
     "thumb": "works/orchid/orchid-thumb.webp",

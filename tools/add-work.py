@@ -118,6 +118,7 @@ def main():
     ap = argparse.ArgumentParser(description="把一幅新画加进网站")
     ap.add_argument("--image", required=True, help="Procreate 导出的 PNG/JPG")
     ap.add_argument("--title", required=True, help="作品标题")
+    ap.add_argument("--title-en", help="英文标题，显示在展签上（可选），比如 Swallow")
     ap.add_argument("--id", help="网址里用的英文名，比如 sleepy-cat；不填会根据日期生成")
     ap.add_argument("--date", default=date.today().isoformat(), help="完成日期，格式 2026-11-01")
     ap.add_argument("--timelapse", help="Procreate 导出的缩时视频（可选）")
@@ -127,7 +128,7 @@ def main():
     ap.add_argument("--tags", help="标签，逗号分隔")
     ap.add_argument("--notes", default="", help="几句创作心得")
     ap.add_argument("--canvas", help="画布尺寸，不填就按原图像素")
-    ap.add_argument("--app", default="Procreate")
+    ap.add_argument("--app", help="用的软件，比如 Procreate（可选）")
     ap.add_argument("--portal", help="洞口位置“横,纵”，0~1，比如 0.5,0.3 表示水平居中、离顶部 30%%；不填会随机挑一个")
     a = ap.parse_args()
 
@@ -144,9 +145,12 @@ def main():
         "thumb": thumb.relative_to(ROOT).as_posix(),
         "width": w,
         "height": h,
-        "app": a.app,
         "canvas": a.canvas or f"{ow} × {oh} px",
     }
+    if a.title_en:
+        entry = {**{k: entry[k] for k in ("id", "title")}, "title_en": a.title_en, **{k: v for k, v in entry.items() if k not in ("id", "title")}}
+    if a.app:
+        entry["app"] = a.app
     if a.timelapse:
         entry["timelapse"] = process_video(Path(a.timelapse).expanduser(), out_dir, a.max_seconds).relative_to(ROOT).as_posix()
     if a.hours:
@@ -171,6 +175,7 @@ def main():
 
     size = sum(f.stat().st_size for f in out_dir.iterdir()) / 1024 / 1024
     print(f"已添加「{a.title}」 → works/{wid}/（共 {size:.1f} MB）")
+    print("如果标题里有新的汉字，记得运行 tools/subset-fonts.py 更新网站字体")
     print(f"本地预览：在网站文件夹运行 python3 -m http.server，然后打开 http://localhost:8000/work.html?id={wid}")
 
 
