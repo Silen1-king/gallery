@@ -95,8 +95,52 @@
     if (img) img.style.viewTransitionName = 'art';
   }
 
+  // 朱印光标：平时是一枚极细的十字准星，移到画上变成「Silen1」小印，点下去盖一下章
+  function seal() {
+    if (!matchMedia('(hover: hover) and (pointer: fine)').matches || reduce) return;
+    const cross = h('div', { class: 'cur cur--cross', 'aria-hidden': 'true' }, h('i'), h('i'), h('i'), h('i'));
+    const stamp = h('div', { class: 'cur cur--seal', 'aria-hidden': 'true' }, h('span', { text: 'Silen1' }));
+    document.body.append(cross, stamp);
+    document.documentElement.classList.add('has-cur');
+    let x = -100, y = -100, sx = x, sy = y, raf = 0, mode = '';
+    const ART = '.frame, .row a, .pager__link';
+    const LINK = 'a, button, input, label, [role="button"]';
+    const setMode = m => {
+      if (m === mode) return;
+      mode = m;
+      cross.dataset.mode = stamp.dataset.mode = m;
+    };
+    const loop = () => {
+      sx += (x - sx) * 0.28; sy += (y - sy) * 0.28; // 印章跟得稍慢一点，像手拿着
+      cross.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+      stamp.style.transform = `translate3d(${sx}px, ${sy}px, 0)`;
+      raf = Math.abs(x - sx) + Math.abs(y - sy) > 0.2 ? requestAnimationFrame(loop) : 0;
+    };
+    addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse') return;
+      x = e.clientX; y = e.clientY;
+      document.documentElement.classList.add('cur-on');
+      const t = e.target.closest ? e.target : null;
+      setMode(t && t.closest(ART) ? 'art' : t && t.closest(LINK) ? 'link' : '');
+      if (!raf) raf = requestAnimationFrame(loop);
+    }, { passive: true });
+    document.addEventListener('pointerleave', () => document.documentElement.classList.remove('cur-on'));
+    addEventListener('blur', () => document.documentElement.classList.remove('cur-on'));
+    addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      stamp.classList.remove('is-press'); void stamp.offsetWidth; stamp.classList.add('is-press');
+      if (mode === 'art') { // 在画上点，留下一枚淡淡的印
+        const mark = h('div', { class: 'cur-mark', 'aria-hidden': 'true' }, h('span', { text: 'Silen1' }));
+        mark.style.left = `${x}px`; mark.style.top = `${y}px`;
+        document.body.append(mark);
+        setTimeout(() => mark.remove(), 900);
+      }
+    });
+  }
+
   const page = document.body.dataset.page;
   bar();
+  seal();
   if (page === 'home') initHome();
   if (page === 'work') initWork();
   if (page === 'collection') initCollection();

@@ -372,6 +372,43 @@ p { margin: 0; text-wrap: pretty; }
   .bar__nav { gap: 18px; letter-spacing: .12em; }
 }
 
+/* ---------- 朱印光标（只在有鼠标的电脑上） ---------- */
+.has-cur, .has-cur * { cursor: none !important; }
+.has-cur input[type="range"] { cursor: none !important; }
+.cur { position: fixed; left: 0; top: 0; z-index: 100; pointer-events: none; opacity: 0; transition: opacity .3s; will-change: transform; }
+.cur-on .cur { opacity: 1; }
+.cur--cross { width: 0; height: 0; }
+.cur--cross i { position: absolute; background: var(--ink); transition: transform .35s var(--ease), opacity .25s, background-color .3s; }
+.cur--cross i:nth-child(1), .cur--cross i:nth-child(2) { width: 6px; height: 1px; top: -.5px; }
+.cur--cross i:nth-child(3), .cur--cross i:nth-child(4) { width: 1px; height: 6px; left: -.5px; }
+.cur--cross i:nth-child(1) { left: -9px; } .cur--cross i:nth-child(2) { left: 3px; }
+.cur--cross i:nth-child(3) { top: -9px; }  .cur--cross i:nth-child(4) { top: 3px; }
+.cur--cross::after { /* 中心一粒小点 */
+  content: ""; position: absolute; left: -1.5px; top: -1.5px; width: 3px; height: 3px; border-radius: 50%; background: var(--seal);
+  transform: scale(0); transition: transform .3s var(--ease);
+}
+.cur--cross[data-mode="link"] i:nth-child(1) { transform: translateX(3px); }
+.cur--cross[data-mode="link"] i:nth-child(2) { transform: translateX(-3px); }
+.cur--cross[data-mode="link"] i:nth-child(3) { transform: translateY(3px); }
+.cur--cross[data-mode="link"] i:nth-child(4) { transform: translateY(-3px); }
+.cur--cross[data-mode="link"]::after { transform: scale(1); }
+.cur--cross[data-mode="art"] i { opacity: 0; }
+.cur--seal { width: 0; height: 0; }
+.cur--seal span, .cur-mark span {
+  position: absolute; left: 0; top: 0; transform: translate(-50%, -50%) scale(.4) rotate(-6deg);
+  font-family: var(--latin); font-size: 12px; line-height: 1; letter-spacing: .02em; white-space: nowrap;
+  padding: 7px 6px 8px; color: #F6ECE2;
+  background: radial-gradient(circle at 30% 25%, #B23E33, var(--seal) 60%, #8E2B23);
+  clip-path: polygon(4% 3%, 50% 0, 97% 4%, 100% 50%, 96% 98%, 50% 100%, 2% 96%, 0 48%);
+  opacity: 0; transition: transform .45s var(--ease), opacity .25s;
+}
+.cur-on .cur--seal[data-mode="art"] span { opacity: .95; transform: translate(-50%, -50%) scale(1) rotate(-6deg); }
+.cur--seal.is-press span { animation: stamp .32s var(--ease); }
+@keyframes stamp { 0% { scale: 1; } 40% { scale: .82; } 100% { scale: 1; } }
+.cur-mark { position: fixed; z-index: 99; pointer-events: none; width: 0; height: 0; }
+.cur-mark span { opacity: .55; transform: translate(-50%, -50%) scale(1) rotate(-6deg); mix-blend-mode: multiply; animation: mark .9s var(--ease) forwards; }
+@keyframes mark { 0% { opacity: .6; } 100% { opacity: 0; filter: blur(1px); } }
+
 /* ---------- 尊重“减少动态效果”设置 ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
