@@ -223,8 +223,8 @@ p { margin: 0; text-wrap: pretty; }
 
 /* ---------- 页脚 ---------- */
 .foot {
-  display: grid; grid-template-columns: repeat(3, auto); justify-content: space-between; gap: 8px 32px;
-  margin: 0 var(--g); padding: 28px 0 max(36px, env(safe-area-inset-bottom)); border-top: 1px solid var(--hair);
+  display: grid; grid-auto-flow: column; justify-content: space-between; gap: 8px 32px;
+  margin: 0 var(--g); padding: 28px 0 max(36px, env(safe-area-inset-bottom)); border-top: 1px solid var(--hair); align-items: baseline;
   font-size: 12px; color: var(--mute); letter-spacing: .04em;
 }
 .foot [lang="en"] { font-family: var(--latin); font-style: italic; font-size: 14px; letter-spacing: .01em; }
@@ -417,3 +417,14 @@ p { margin: 0; text-wrap: pretty; }
   @view-transition { navigation: none; }
 }
 .piece__meta:empty { display: none; }
+
+/* ---------- 回到 silen1.com ---------- */
+.bar__out { color: var(--mute) !important; }
+.bar__out i { font-style: normal; font-size: .9em; margin-left: 3px; display: inline-block; transition: transform .5s var(--ease); }
+.bar__out:hover { color: var(--seal) !important; }
+.bar__out:hover i { transform: translate(2px, -2px); }
+.foot__home a, .lost__home a { color: var(--ink-2); padding-bottom: 2px; background: linear-gradient(currentColor, currentColor) 0 100% / 0 1px no-repeat; transition: background-size .5s var(--ease), color .3s; }
+.foot__home a:hover, .lost__home a:hover { color: var(--seal); background-size: 100% 1px; }
+.lost__home { font-size: 13px; letter-spacing: .1em; margin-top: -24px !important; }
+@media (max-width: 960px) { .foot { grid-auto-flow: row; } }
+@media (max-width: 420px) { .bar__nav { gap: 12px; letter-spacing: .06em; } .mark { gap: 8px; } .mark__name { font-size: 18px; } }
