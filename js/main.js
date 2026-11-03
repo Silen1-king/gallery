@@ -30,7 +30,8 @@
     return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`;
   };
   const no = w => `No. ${String(w._no).padStart(2, '0')}`;
-  const year = w => String(w.date || '').slice(0, 4);
+  const year = w => String(w.date || '').slice(0, 4); // 只显示年份，不显示具体日期
+  const ar = w => (w.width && w.height ? w.width / w.height : 1); // 宽高比，竖长的画按高度收窄
   const workUrl = w => `work.html?id=${encodeURIComponent(w.id)}`;
   const canvas = w => w.canvas || (w.width && w.height ? `${w.width} × ${w.height} px` : '');
   const medium = w => ['iPad 数字绘画', canvas(w)].filter(Boolean).join(' · ');
@@ -106,6 +107,7 @@
     if (latest) {
       $('#hero-fig').hidden = false;
       const a = $('#hero-art');
+      $('#hero-fig').style.setProperty('--ar', ar(latest));
       a.href = workUrl(latest);
       a.dataset.id = latest.id;
       a.append(h('img', { src: latest.image, alt: latest.title, width: latest.width, height: latest.height, decoding: 'async', fetchpriority: 'high' }));
@@ -121,6 +123,7 @@
     WORKS.forEach((w, i) => {
       const art = h('a', { class: 'frame wall__art', href: workUrl(w), 'data-id': w.id, 'aria-label': `${w.title}，查看作品` },
         h('img', { src: w.image, alt: w.title, width: w.width, height: w.height, decoding: 'async', loading: i < 1 ? 'eager' : 'lazy' }));
+      art.style.setProperty('--ar', ar(w));
       hall.append(h('section', { class: `wall reveal ${i % 2 ? 'wall--r' : 'wall--l'}`, 'aria-label': w.title, 'data-i': i }, art, label(w)));
     });
 
@@ -139,11 +142,8 @@
     $('#works-empty').hidden = WORKS.length > 0;
 
     // 页脚：最近更新
-    const newest = WORKS.reduce((m, w) => (String(w.date || '') > m ? String(w.date) : m), '');
-    if (newest) {
-      $('#foot-year').textContent = newest.slice(0, 4);
-      $('#foot-updated').textContent = `共 ${WORKS.length} 件 · 最近更新 ${newest.replace(/-/g, '.')}`;
-    }
+    // 不标具体日期，页脚只写件数
+    if (WORKS.length) $('#foot-updated').textContent = `共 ${WORKS.length} 件`;
 
     // 角落里的展厅编号：走到哪一面墙，就显示第几件
     const room = $('#room');
@@ -200,6 +200,7 @@
     $('#piece-notes').textContent = w.notes || '';
     $('#piece-notes').hidden = !w.notes;
     const art = $('#piece-art');
+    art.style.setProperty('--ar', ar(w));
     art.href = w.image;
     const big = h('img', { src: w.image, alt: w.title, width: w.width, height: w.height, decoding: 'async' });
     art.append(big);
@@ -207,7 +208,6 @@
     $('#piece-full').href = w.image;
 
     const meta = [
-      ['完成', w.date ? String(w.date).replace(/-/g, '.') : null],
       ['软件', w.app],
       ['用时', w.hours ? `约 ${w.hours} 小时` : null],
       ['笔刷', Array.isArray(w.brushes) ? w.brushes.join('、') : w.brushes],
@@ -285,8 +285,7 @@
       vault.append(h('section', { class: `wall reveal ${i % 2 ? 'wall--r' : 'wall--l'}`, 'aria-label': `${x.artist}《${x.title}》` }, art, lbl));
     });
     $('#vault-empty').hidden = items.length > 0;
-    const newest = items.reduce((m, x) => (String(x.added || '') > m ? String(x.added) : m), '');
-    if (newest) $('#foot-updated').textContent = `共 ${items.length} 件 · 最近更新 ${newest.replace(/-/g, '.')}`;
+    if (items.length) $('#foot-updated').textContent = `共 ${items.length} 件`;
     reveal();
   }
 

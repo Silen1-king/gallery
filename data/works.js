@@ -75,5 +75,27 @@ window.WORKS = [
       0.2,
       0.31
     ]
+  },
+  {
+    "id": "mountain",
+    "title": "山",
+    "title_en": "Mountains",
+    "date": "2026-11-03",
+    "image": "works/mountain/mountain.webp",
+    "thumb": "works/mountain/mountain-thumb.webp",
+    "width": 611,
+    "height": 723,
+    "canvas": "611 × 723 px"
+  },
+  {
+    "id": "spring",
+    "title": "春天",
+    "title_en": "Spring",
+    "date": "2026-11-03",
+    "image": "works/spring/spring.webp",
+    "thumb": "works/spring/spring-thumb.webp",
+    "width": 836,
+    "height": 2000,
+    "canvas": "1079 × 2580 px"
   }
 ];
